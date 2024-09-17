@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefullset-sistema-noticias
+spec:
+  selector:
+    matchLabels:
+      app: sistema-noticias
+  serviceName: svc-sistema-noticias
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: sistema-noticias
+    spec:
+      containers:
+      - name: sistema-noticias-container
+        image: aluracursos/sistema-noticias:1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 80
+        envFrom:
+          - configMapRef:
+              name: configmap-sistema
+        volumeMounts:
+          - name: imagens-pvc
+            mountPath: /var/www/html/uploads
+          - name: sessao-pvc
+            mountPath: /tmp
+  volumeClaimTemplates:
+  - metadata:
+      name: imagens-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+  - metadata:
+      name: sessao-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-portal-noticias
+spec:
+  selector:
+    matchLabels:
+      app: pod-portal-noticias
+  template:
+    metadata:
+      labels:
+        app: pod-portal-noticias
+    spec:
+      containers:
+      - name: portal-noticias-container
+        image: aluracursos/portal-noticias:1
+        ports:
+          - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        envFrom:
+          - configMapRef:
+              name: configmap-noticias
+  replicas: 3
+
